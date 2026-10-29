@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Lightspeed GTM audit · Emiel Madonna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600&family=Hanken+Grotesk:wght@400;500&family=DM+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#0E1A16;--ink:#F3F4EF;--ink2:#A9B5AE;--ink3:#74827B;--line:#1F2E28;--mint:#4FD8B4;--trail:#3A8C76;--err:#F07167}
+*{box-sizing:border-box;margin:0}html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 'Hanken Grotesk',system-ui,sans-serif;display:grid;place-items:center;padding:24px 16px;-webkit-font-smoothing:antialiased}
+.w{width:100%;max-width:380px}
+.lock{display:flex;align-items:center;gap:6px}.lock svg{height:22px;width:auto}.lock span{font:600 22px/1 Outfit,sans-serif;letter-spacing:-.02em}
+h1{font:600 34px/1.02 Outfit,sans-serif;letter-spacing:-.03em;margin:48px 0 10px}
+p.s{color:var(--ink2);margin-bottom:28px}
+label{display:block;font:500 11px/1 'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;background:#13221D;border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:14px 14px;font:500 16px 'DM Mono',monospace;outline:none}
+input:focus{border-color:var(--mint);box-shadow:0 0 0 2px rgba(79,216,180,.25)}
+button{background:var(--mint);color:var(--bg);border:0;border-radius:12px;padding:0 18px;font:600 16px Outfit,sans-serif;cursor:pointer}
+button:disabled{opacity:.6}
+.e{color:var(--err);font-size:14px;min-height:22px;margin-top:10px}
+.f{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}.f b{color:var(--ink);font-weight:500}
+</style></head><body><main class="w">
+<div class="lock"><svg viewBox="0 0 142 104" aria-hidden="true"><polygon fill="#3A8C76" points="0,52 75.5,2 110,52 75.5,102"/><circle fill="#4FD8B4" cx="110" cy="52" r="32"/></svg><span>Lightspeed</span></div>
+<h1>The GTM audit.</h1><p class="s">The password is on the card.</p>
+<form id="f" autocomplete="off"><label for="pw">Password</label><div class="row"><input id="pw" type="password" autocapitalize="none" spellcheck="false" autofocus><button id="b" type="submit">Open</button></div><p class="e" id="e"></p></form>
+<p class="f"><b>Emiel Madonna</b> · GTM AI Engineer · emielmadonna@gmail.com</p>
+</main>
+<script>
+(function(){
+var f=document.getElementById('f'),pw=document.getElementById('pw'),b=document.getElementById('b'),e=document.getElementById('e');
+var blob=fetch('deck.enc.json',{cache:'no-store'}).then(function(r){return r.json()});
+function u8(s){return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0)})}
+async function open(p){var d=await blob;var k=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveKey']);
+var key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:u8(d.s),iterations:d.n,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt']);
+var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:u8(d.i)},key,u8(d.c));return new TextDecoder().decode(pt)}
+async function go(p,quiet){b.disabled=true;e.textContent=quiet?'':'Unlocking…';try{var h=await open(p);try{sessionStorage.setItem('lsp',p)}catch(_){}
+document.open();document.write(h);document.close();}catch(err){b.disabled=false;e.textContent=quiet?'':'That password didn\'t work.';try{sessionStorage.removeItem('lsp')}catch(_){}}}
+f.addEventListener('submit',function(ev){ev.preventDefault();go(pw.value.trim().toLowerCase())});
+try{var s=sessionStorage.getItem('lsp');if(s)go(s,true)}catch(_){}
+})();
+</script></body></html>
